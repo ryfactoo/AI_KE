@@ -43,16 +43,16 @@ def time_to_minutes_after_midnight(time_str):
 
 
 if __name__ == '__main__':
-    # list = create_list_from_csv('data.csv')
-    list = create_list_from_csv('mini.csv')
+    list = create_list_from_csv('data.csv')
+    # list = create_list_from_csv('mini.csv')
 
     graph = create_graph_from_list(list)
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00"))
     # astar.astar2(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00","s")
 
-    dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00"))
-    astar.astar2(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00", "s")
+    # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00"))
+    # astar.astar2(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00", "s")
 
     # start_time = time.time()
     # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
@@ -63,19 +63,19 @@ if __name__ == '__main__':
     #
     #
     # start_time = time.time()
-    # astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","s")
+    # astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","t")
     # end_time = time.time()
     #
     # elapsed_time = end_time - start_time
     # print("Czas działania funkcji: ", elapsed_time, "sekundy")
 
-    # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "02:00:00"))
-    # print("-------------------------")
-    # astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "02:00:00","s")
+    dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
+    print("-------------------------")
+    astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","s")
 
-    # dijkstra.print_path(dijkstra.shortest_path(graph,"LEŚNICA".upper(), "IWINY - pętla".upper(), "07:15:00"))
+    # dijkstra.print_path(dijkstra.shortest_path(graph,"Wyszyńskiego".upper(), "pl. grunwaldzki".upper(), "07:15:00"))
     # print("-------------------------")
-    # astar.astar2(graph,"LEŚNICA".upper(), "IWINY - pętla".upper(), "23:40:00","t")
+    # astar.astar2(graph,"Wyszyńskiego".upper(), "pl. grunwaldzki".upper(), "07:15:00","t")
 
 
     # dijkstra.print_path(dijkstra.shortest_path(graph, "Wyszyńskiego".upper(), "PL. grunwaldzki".upper(), "11:33:00"))

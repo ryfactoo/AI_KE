@@ -21,19 +21,17 @@ def astar(graph, start, goal, start_time):
 
         for neighbor in graph.graph_dict[current]:
 
-            weight = neighbor[2]
+            new_cost = neighbor[2]
             if neighbor[1] < cost_so_far[current]:
-                weight = weight + 24 * 60
-            while 0 > weight - cost_so_far[current]:
-                weight = weight + 60 * 24
-            weight = weight - cost_so_far[current]
-            new_cost = cost_so_far[current] + weight
+                new_cost = new_cost + 24 * 60
+            while 0 > new_cost - cost_so_far[current]:
+                new_cost = new_cost + 60 * 24
 
             if neighbor[3] not in cost_so_far or new_cost < cost_so_far[neighbor[3]]:
-                cost_so_far[neighbor[3]] = new_cost  # orgin
-                priority = new_cost + lowest_time_heuristic(neighbor, graph.graph_dict[goal][0])  # orgin
-                heapq.heappush(front, (priority, neighbor[3]))  # orgin
-                came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]  # orgin
+                cost_so_far[neighbor[3]] = new_cost
+                priority = new_cost - cost_so_far[current] + lowest_time_heuristic(neighbor, graph.graph_dict[goal][0])
+                heapq.heappush(front, (priority, neighbor[3]))
+                came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
 
     path = [(goal, None, None, None, None)]
     current = came_from[goal]
@@ -49,7 +47,7 @@ def astar(graph, start, goal, start_time):
 def astar_lower_line_switch(graph, start, goal, start_time):
     front = [(start_time, start)]
     came_from = {start: (None, None, None, None, None)}
-    cost_so_far = {start: start_time}
+    cost_so_far = {start: (start_time, start_time)}
 
     while front:
         _, current = heapq.heappop(front)
@@ -63,13 +61,13 @@ def astar_lower_line_switch(graph, start, goal, start_time):
         for neighbor in graph.graph_dict[current]:
 
             weight = neighbor[2]
-            if neighbor[1] < cost_so_far[current]:
+            if neighbor[1] < cost_so_far[current][0]:
                 weight = weight + 24 * 60
-            while 0 > weight - cost_so_far[current]:
+            while 0 > weight - cost_so_far[current][0]:
                 weight = weight + 60 * 24
-            weight = weight - cost_so_far[current]
-            new_cost = cost_so_far[current] + weight + lowest_stop_heuristic(neighbor, graph.graph_dict[goal][0],
-                                                                             came_from[current][3])
+            weight = weight - cost_so_far[current][0]
+            new_cost = cost_so_far[current][0] + weight + lowest_stop_heuristic(neighbor, graph.graph_dict[goal][0],
+                                                                                came_from[current][3])
 
             # if (neighbor[3] == "poczta główna".upper()):
             #     print("elo")
@@ -78,15 +76,17 @@ def astar_lower_line_switch(graph, start, goal, start_time):
             #                                             came_from[current][3])  # test
 
             # if neighbor[3] not in cost_so_far or priority < cost_so_far[neighbor[3]]:  # test
-            if neighbor[3] not in cost_so_far or new_cost < cost_so_far[neighbor[3]]:  # test
-
+            if neighbor[3] not in cost_so_far or new_cost < cost_so_far[neighbor[3]][1]:  # test
+                # if neighbor[3] not in cost_so_far or weight < cost_so_far[neighbor[3]][0]:
+                cost_so_far[neighbor[3]] = (weight,new_cost)  # test
+                came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]  # orgin
                 # if neighbor[3] not in cost_so_far or new_cost < cost_so_far[neighbor[3]]:  # orgin
                 #     cost_so_far[neighbor[3]] = new_cost
                 # cost_so_far[neighbor[3]] = new_cost#orgin
-                priority = new_cost + lowest_time_heuristic(neighbor, graph.graph_dict[goal][0],)  # orgin
-                cost_so_far[neighbor[3]] = new_cost#test
+                priority = new_cost + lowest_time_heuristic(neighbor, graph.graph_dict[goal][0], )  # orgin
+                # cost_so_far[neighbor[3]] = (cost_so_far[neighbor[3]][0],new_cost)  # test
                 heapq.heappush(front, (priority, neighbor[3]))  # orgin
-                came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]  # orgin
+
 
     path = [(goal, None, None, None, None)]
     current = came_from[goal]
@@ -114,7 +114,7 @@ def lowest_time_heuristic(current_stop, goal_stop):
 
 
 def lowest_stop_heuristic(current_stop, goal_stop, line):
-    fine = 60
+    fine = 120
 
     if line is None or current_stop[0] == line:
         return 0
@@ -162,9 +162,10 @@ def minute_after_midnight_to_str(time):
 
 
 def astar2(graph, start, goal, start_time, heuristic="t"):
-    if heuristic != "t":
+    if heuristic.upper() != "T":
         start_time, end_time, path = astar_lower_line_switch(graph, start.upper(), goal.upper(),
                                                              csvToObj.time_to_minutes_after_midnight(start_time))
+        end_time = end_time[0]
     else:
         start_time, end_time, path = astar(graph, start.upper(), goal.upper(),
                                            csvToObj.time_to_minutes_after_midnight(start_time))
