@@ -7,7 +7,7 @@ import time
 
 def create_list_from_csv(csv_file):
     edges = []
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, 'r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
@@ -43,31 +43,31 @@ def time_to_minutes_after_midnight(time_str):
 
 
 if __name__ == '__main__':
-    list = create_list_from_csv('data.csv')
-    # list = create_list_from_csv('mini.csv')
+    # list = create_list_from_csv('data.csv')
+    list = create_list_from_csv('mini.csv')
 
     graph = create_graph_from_list(list)
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00"))
     # astar.astar2(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00","s")
 
-    # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Broniewskiego".upper(), "20:52:00"))
-    # astar.astar2(graph,"PAPROTNA".upper(), "Broniewskiego".upper(), "20:52:00")
+    dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00"))
+    astar.astar2(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00", "s")
 
-    start_time = time.time()
-    dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
-    end_time = time.time()
-
-    elapsed_time = end_time - start_time
-    print("Czas działania funkcji: ", elapsed_time, "sekundy")
-
-
-    start_time = time.time()
-    astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","s")
-    end_time = time.time()
-
-    elapsed_time = end_time - start_time
-    print("Czas działania funkcji: ", elapsed_time, "sekundy")
+    # start_time = time.time()
+    # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
+    # end_time = time.time()
+    #
+    # elapsed_time = end_time - start_time
+    # print("Czas działania funkcji: ", elapsed_time, "sekundy")
+    #
+    #
+    # start_time = time.time()
+    # astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","s")
+    # end_time = time.time()
+    #
+    # elapsed_time = end_time - start_time
+    # print("Czas działania funkcji: ", elapsed_time, "sekundy")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "02:00:00"))
     # print("-------------------------")
