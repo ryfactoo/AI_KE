@@ -59,7 +59,7 @@ def shortest_path(graph, start, goal, start_time_str):
             curr_node = prev_nodes[curr_node]#ID HELLPER
 
     path.reverse()
-    hour = distances[goal] // 60
+    hour = (distances[goal] // 60)%24
     minute = distances[goal]%60
     return start_time_str,f"{hour:02d}:{minute:02d}:00", path
 

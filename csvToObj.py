@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
     print("-------------------------")
-    astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","s")
+    astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","t")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"Wyszyńskiego".upper(), "pl. grunwaldzki".upper(), "07:15:00"))
     # print("-------------------------")

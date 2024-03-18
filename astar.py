@@ -1,9 +1,9 @@
 import heapq
 import csvToObj
 import math
-import graph
 from geopy.distance import geodesic
 
+penalty = 20
 
 def astar(graph, start, goal, start_time):
     front = [(start_time, start)]
@@ -42,6 +42,54 @@ def astar(graph, start, goal, start_time):
     path.reverse()
 
     return start_time, cost_so_far[goal], path
+
+
+def astar_proba_mocy_godzina_23(graph, start, goal, start_time):
+    front = [(start_time, start, 0)]
+    came_from = {start: (None, None, None, None, None)}
+    cost_so_far = {start: (start_time, 0)}
+
+    while front:
+        _, current, line_switch = heapq.heappop(front)
+
+        if current == goal:
+            break
+
+        if current not in graph.graph_dict:
+            continue
+
+        for neighbor in graph.graph_dict[current]:
+
+            new_cost = neighbor[2]
+            if neighbor[1] < cost_so_far[current][0]:
+                new_cost = new_cost + 24 * 60
+            while 0 > new_cost - cost_so_far[current][0]:
+                new_cost = new_cost + 60 * 24
+
+            new_line_switch = line_switch
+            if came_from[current][3] is not None and neighbor[0] != came_from[current][3]:
+                new_line_switch = new_line_switch + 1
+
+            if neighbor[3] not in cost_so_far or new_cost - (cost_so_far[neighbor[3]][1] - new_line_switch) * penalty < cost_so_far[neighbor[3]][0]:
+
+                if neighbor[3] not in cost_so_far or cost_so_far[neighbor[3]][1] > new_line_switch:
+                    cost_so_far[neighbor[3]] = (new_cost, new_line_switch)
+                    came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
+                # cost_so_far[neighbor[3]] = (new_cost,new_line_switch)
+                priority = new_cost - cost_so_far[current][0] + lowest_stop_heuristic(neighbor, graph.graph_dict[goal][0],
+                                                                                   came_from[current][3])
+                heapq.heappush(front, (priority, neighbor[3], new_line_switch))
+                # came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
+
+    path = [(goal, None, None, None, None)]
+    current = came_from[goal]
+    while current[0] != start:
+        path.append(current)
+        current = came_from[current[0]]
+    path.append(current)
+    path.reverse()
+
+    return start_time, cost_so_far[goal][0], path
 
 
 def astar_lower_line_switch(graph, start, goal, start_time):
@@ -114,12 +162,12 @@ def lowest_time_heuristic(current_stop, goal_stop):
 
 
 def lowest_stop_heuristic(current_stop, goal_stop, line):
-    fine = 120
+    heuristic = lowest_time_heuristic(current_stop, goal_stop)
 
     if line is None or current_stop[0] == line:
-        return 0
+        return heuristic
     else:
-        return fine
+        return penalty + heuristic
 
 
 def print_astar(start_time, end_time, path):
@@ -163,9 +211,11 @@ def minute_after_midnight_to_str(time):
 
 def astar2(graph, start, goal, start_time, heuristic="t"):
     if heuristic.upper() != "T":
-        start_time, end_time, path = astar_lower_line_switch(graph, start.upper(), goal.upper(),
+        # start_time, end_time, path = astar_lower_line_switch(graph, start.upper(), goal.upper(),
+        #                                                      csvToObj.time_to_minutes_after_midnight(start_time))
+        # end_time = end_time[0]
+        start_time, end_time, path = astar_proba_mocy_godzina_23(graph, start.upper(), goal.upper(),
                                                              csvToObj.time_to_minutes_after_midnight(start_time))
-        end_time = end_time[0]
     else:
         start_time, end_time, path = astar(graph, start.upper(), goal.upper(),
                                            csvToObj.time_to_minutes_after_midnight(start_time))
