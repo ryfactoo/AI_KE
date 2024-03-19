@@ -3,7 +3,8 @@ import csvToObj
 import math
 from geopy.distance import geodesic
 
-penalty = 20
+penalty = 60
+
 
 def astar(graph, start, goal, start_time):
     front = [(start_time, start)]
@@ -44,6 +45,79 @@ def astar(graph, start, goal, start_time):
     return start_time, cost_so_far[goal], path
 
 
+# line, departure_time, arrival_time, end_stop, start_stop_lat,start_stop_lon, end_stop_lat, end_stop_lon, id
+
+def astar_multi_come_from(graph, start, goal, start_time):
+    front = [(start_time, start)]
+    came_from = {(start, "None"): (None, None, None, None, None)}
+    cost_so_far = {(start, "None"): start_time}
+    lowes_cost_so_far = {start: start_time}
+    lines_from_start = set()
+    end = False
+
+    while front:
+        _, current = heapq.heappop(front)
+
+        if current == goal:
+            for line in lines_from_start:
+                if (goal,line) in cost_so_far:
+                    end = True
+
+            if end:
+                break
+
+        if current not in graph.graph_dict:
+            continue
+
+        for neighbor in graph.graph_dict[current]:
+
+            if current == start:
+                lines_from_start.add(neighbor[0])
+
+            new_cost = neighbor[2]
+
+            if (current, neighbor[0]) not in cost_so_far:
+                cost = lowes_cost_so_far[current]
+            else:
+                cost = cost_so_far[(current, neighbor[0])]
+
+            if neighbor[1] < cost:
+                new_cost = new_cost + 24 * 60
+            while 0 > new_cost - cost:
+                new_cost = new_cost + 60 * 24
+
+            if (neighbor[3], neighbor[0]) not in cost_so_far or new_cost < cost_so_far[neighbor[3], neighbor[0]]:
+                cost_so_far[(neighbor[3], neighbor[0])] = new_cost
+                came_from[(neighbor[3], neighbor[0])] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
+
+                priority = new_cost - cost + lowest_stop_heuristic(neighbor,
+                                                graph.graph_dict[goal][0],came_from[(neighbor[3], neighbor[0])][3])
+                heapq.heappush(front, (priority, neighbor[3]))
+
+                if neighbor[3] not in lowes_cost_so_far or new_cost < lowes_cost_so_far[neighbor[3]]:
+                    lowes_cost_so_far[neighbor[3]] = new_cost
+
+
+    line = None
+    for line_from_start in lines_from_start:
+        if (goal,line_from_start) in cost_so_far and (line == None or cost_so_far[goal,line_from_start] < cost_line):
+            line = line_from_start
+            cost_line = cost_so_far[goal,line_from_start]
+
+    path = [(goal, None, None, None, None)]
+    current = came_from[goal, line]
+    while current[0] != start:
+        path.append(current)
+        if current[0] == start:
+            current = came_from[(current[0], None)]
+        else:
+            current = came_from[current[0], line]
+    path.append(current)
+    path.reverse()
+
+    return start_time, cost_so_far[goal, line], path
+
+
 def astar_proba_mocy_godzina_23(graph, start, goal, start_time):
     front = [(start_time, start, 0)]
     came_from = {start: (None, None, None, None, None)}
@@ -70,14 +144,16 @@ def astar_proba_mocy_godzina_23(graph, start, goal, start_time):
             if came_from[current][3] is not None and neighbor[0] != came_from[current][3]:
                 new_line_switch = new_line_switch + 1
 
-            if neighbor[3] not in cost_so_far or new_cost - (cost_so_far[neighbor[3]][1] - new_line_switch) * penalty < cost_so_far[neighbor[3]][0]:
+            if neighbor[3] not in cost_so_far or new_cost - (cost_so_far[neighbor[3]][1] - new_line_switch) * penalty < \
+                    cost_so_far[neighbor[3]][0]:
 
                 if neighbor[3] not in cost_so_far or cost_so_far[neighbor[3]][1] > new_line_switch:
                     cost_so_far[neighbor[3]] = (new_cost, new_line_switch)
                     came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
                 # cost_so_far[neighbor[3]] = (new_cost,new_line_switch)
-                priority = new_cost - cost_so_far[current][0] + lowest_stop_heuristic(neighbor, graph.graph_dict[goal][0],
-                                                                                   came_from[current][3])
+                priority = new_cost - cost_so_far[current][0] + lowest_stop_heuristic(neighbor,
+                                                                                      graph.graph_dict[goal][0],
+                                                                                      came_from[current][3])
                 heapq.heappush(front, (priority, neighbor[3], new_line_switch))
                 # came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
 
@@ -126,7 +202,7 @@ def astar_lower_line_switch(graph, start, goal, start_time):
             # if neighbor[3] not in cost_so_far or priority < cost_so_far[neighbor[3]]:  # test
             if neighbor[3] not in cost_so_far or new_cost < cost_so_far[neighbor[3]][1]:  # test
                 # if neighbor[3] not in cost_so_far or weight < cost_so_far[neighbor[3]][0]:
-                cost_so_far[neighbor[3]] = (weight,new_cost)  # test
+                cost_so_far[neighbor[3]] = (weight, new_cost)  # test
                 came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]  # orgin
                 # if neighbor[3] not in cost_so_far or new_cost < cost_so_far[neighbor[3]]:  # orgin
                 #     cost_so_far[neighbor[3]] = new_cost
@@ -134,7 +210,6 @@ def astar_lower_line_switch(graph, start, goal, start_time):
                 priority = new_cost + lowest_time_heuristic(neighbor, graph.graph_dict[goal][0], )  # orgin
                 # cost_so_far[neighbor[3]] = (cost_so_far[neighbor[3]][0],new_cost)  # test
                 heapq.heappush(front, (priority, neighbor[3]))  # orgin
-
 
     path = [(goal, None, None, None, None)]
     current = came_from[goal]
@@ -214,8 +289,8 @@ def astar2(graph, start, goal, start_time, heuristic="t"):
         # start_time, end_time, path = astar_lower_line_switch(graph, start.upper(), goal.upper(),
         #                                                      csvToObj.time_to_minutes_after_midnight(start_time))
         # end_time = end_time[0]
-        start_time, end_time, path = astar_proba_mocy_godzina_23(graph, start.upper(), goal.upper(),
-                                                             csvToObj.time_to_minutes_after_midnight(start_time))
+        start_time, end_time, path = astar_multi_come_from(graph, start.upper(), goal.upper(),
+                                                                 csvToObj.time_to_minutes_after_midnight(start_time))
     else:
         start_time, end_time, path = astar(graph, start.upper(), goal.upper(),
                                            csvToObj.time_to_minutes_after_midnight(start_time))
