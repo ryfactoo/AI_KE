@@ -43,8 +43,8 @@ def time_to_minutes_after_midnight(time_str):
 
 
 if __name__ == '__main__':
-    list = create_list_from_csv('data.csv')
-    # list = create_list_from_csv('mini.csv')
+    list = create_list_from_csv('data_avg.csv')
+    # list = create_list_from_csv('mini_avg.csv')
 
     graph = create_graph_from_list(list)
 
