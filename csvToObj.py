@@ -49,7 +49,7 @@ if __name__ == '__main__':
     graph = create_graph_from_list(list)
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00"))
-    # astar.astar2(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00","s")
+    # astar.astar2(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00","t")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00"))
     # astar.astar2(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00", "s")
@@ -69,17 +69,17 @@ if __name__ == '__main__':
     # elapsed_time = end_time - start_time
     # print("Czas działania funkcji: ", elapsed_time, "sekundy")
 
-    dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
+    # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00"))
     # print("-------------------------")
-    # astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","s")
+    # astar.astar2(graph,"krzyki".upper(), "Jarnołtów".upper(), "23:00:00","t")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"Wyszyńskiego".upper(), "pl. grunwaldzki".upper(), "07:15:00"))
     # print("-------------------------")
     # astar.astar2(graph,"Wyszyńskiego".upper(), "pl. grunwaldzki".upper(), "07:15:00","s")
 
-    # dijkstra.print_path(dijkstra.shortest_path(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00"))
-    # print("-------------------------")
-    # astar.astar2(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00","s")
+    dijkstra.print_path(dijkstra.shortest_path(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00"))
+    print("-------------------------")
+    astar.astar2(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00","s")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "LEŚNICA".upper(), "00:07:00"))
     # print("-------------------------")

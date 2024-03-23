@@ -9,7 +9,7 @@ def dijkstra(graph, start, start_time):
     pq = [(start_time, start)]
     prev_nodes = {node: None for node in graph.graph_dict}
     prev_nodes[start] = (
-    None, start_time, None, None, graph.graph_dict[start][0][4], graph.graph_dict[start][0][5], None, None)
+        None, start_time, None, None, graph.graph_dict[start][0][4], graph.graph_dict[start][0][5], None, None)
     while pq:
         curr_dist, curr_node = heapq.heappop(pq)
         if curr_dist > distances[curr_node] or curr_node not in graph.graph_dict:
@@ -40,7 +40,7 @@ def dijkstra(graph, start, start_time):
             if new_dist < distances[neighbor]:
                 distances[neighbor] = new_dist
                 prev_nodes[neighbor] = (
-                curr_node, node[1], node[0], node[8], node[4], node[5], node[6], node[7])  # ID HELLPER
+                    curr_node, node[1], node[0], node[8], node[4], node[5], node[6], node[7])  # ID HELLPER
                 heapq.heappush(pq, (new_dist, neighbor))
     return distances, prev_nodes
 
@@ -107,13 +107,13 @@ def print_path(time_start_end_path):
 
 
 def print_path_on_map(path):
-    m = folium.Map(location=[51.14, 17.02], zoom_start=12)  # Ustawienie początkowego położenia mapy
+    m = folium.Map(location=[51.14, 17.02], zoom_start=12)
     current_line = path[0][3]
     color = 'blue'
     for i in range(1, len(path)):
         start_node = path[i]
 
-        if i == len(path) -1:
+        if i == len(path) - 1:
             end_node = path[i]
             end_coords = (float(end_node[7]), float(end_node[8]))
 
@@ -126,12 +126,8 @@ def print_path_on_map(path):
         if i == 1:
             folium.Marker(location=start_coords, icon=folium.Icon(color='green')).add_to(m)
         else:
-            folium.Marker(location=start_coords, icon=folium.Icon(color='blue')).add_to(m)
+            folium.Marker(location=start_coords, icon=folium.Icon(color)).add_to(m)
 
-            # Dodanie pinezki na końcu każdego odcinka
-        folium.Marker(location=end_coords, icon=folium.Icon(color='red')).add_to(m)
-
-        # Dodanie linii łączącej punkty z odpowiednim kolorem
         if current_line != start_node[3]:
             color = negation_color(color)
 
@@ -139,13 +135,16 @@ def print_path_on_map(path):
 
         current_line = start_node[3]
 
+    folium.Marker(location=end_coords, icon=folium.Icon(color='red')).add_to(m)
     m.save('dijkstra_map.html')
-    webbrowser.open('dijkstra_map.html')
+    # webbrowser.open('dijkstra_map.html')
+
 
 def negation_color(color):
     if color == 'blue':
-        return 'red'
-    else: return 'blue'
+        return 'orange'
+    else:
+        return 'blue'
 
 # def print_path_on_map(path):
 #     m = folium.Map(location=[52.0, 20.0], zoom_start=10)  # Ustawienie początkowego położenia mapy

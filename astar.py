@@ -1,6 +1,7 @@
 import heapq
 import csvToObj
-import math
+import webbrowser
+import folium
 from geopy import distance as geopy_distance
 
 penalty = 60
@@ -32,7 +33,8 @@ def astar(graph, start, goal, start_time, heuristic):
                 cost_so_far[neighbor[3]] = new_cost
                 priority = new_cost - cost_so_far[current] + heuristic(neighbor, graph.graph_dict[goal][0])
                 heapq.heappush(front, (priority, neighbor[3]))
-                came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
+                came_from[neighbor[3]] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8], neighbor[4],\
+                                        neighbor[5], neighbor[6], neighbor[7]
 
     path = [(goal, None, None, None, None)]
     current = came_from[goal]
@@ -88,7 +90,8 @@ def astar_multi_come_from(graph, start, goal, start_time):
 
             if (neighbor[3], neighbor[0]) not in cost_so_far or new_cost < cost_so_far[neighbor[3], neighbor[0]]:
                 cost_so_far[(neighbor[3], neighbor[0])] = new_cost
-                came_from[(neighbor[3], neighbor[0])] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8]
+                came_from[(neighbor[3], neighbor[0])] = current, neighbor[2], neighbor[1], neighbor[0], neighbor[8], neighbor[4],\
+                                        neighbor[5], neighbor[6], neighbor[7]
 
                 priority = new_cost - cost + lowest_stop_heuristic(neighbor,
                                                 graph.graph_dict[goal][0],came_from[(neighbor[3], neighbor[0])][3])
@@ -242,8 +245,10 @@ def meters_to_min(meters):
 def lowest_time_heuristic_manhattan(current_stop, goal_stop):
     return meters_to_min(manhattan_distance(current_stop, goal_stop))
 
+
 def lowest_time_heuristic_avg_manhattan_euclidean(current_stop, goal_stop):
     return meters_to_min((manhattan_distance(current_stop, goal_stop) + euclidean_distance(current_stop, goal_stop))/2)
+
 
 def lowest_stop_heuristic(current_stop, goal_stop, line):
     heuristic = lowest_time_heuristic_manhattan(current_stop, goal_stop)
@@ -286,6 +291,8 @@ def print_astar(start_time, end_time, path):
     minute = last_stop[1] % 60
     print(" ---> " + f"{hour:02d}:{minute:02d}:00")
 
+    print_path_on_map(path)
+
 
 def minute_after_midnight_to_str(time):
     hour = (time // 60) % 24
@@ -310,5 +317,46 @@ def astar2(graph, start, goal, start_time, heuristic="t"):
                                            csvToObj.time_to_minutes_after_midnight(start_time),
                                            lowest_time_heuristic_avg_manhattan_euclidean)
         print_astar(minute_after_midnight_to_str(start_time), minute_after_midnight_to_str(end_time), path)
+
+
+def print_path_on_map(path):
+    m = folium.Map(location=[51.14, 17.02], zoom_start=12)
+    current_line = path[0][3]
+    color = 'blue'
+    for i in range(len(path)-1):
+        start_node = path[i]
+
+        if i == len(path) - 2:
+            end_node = path[i]
+            end_coords = (float(end_node[7]), float(end_node[8]))
+
+        else:
+            end_node = path[i + 1]
+            end_coords = (float(end_node[5]), float(end_node[6]))
+
+        start_coords = (float(start_node[5]), float(start_node[6]))
+
+        if i == 0:
+            folium.Marker(location=start_coords, icon=folium.Icon(color='green')).add_to(m)
+        else:
+            folium.Marker(location=start_coords, icon=folium.Icon(color)).add_to(m)
+
+        if current_line != start_node[3]:
+            color = negation_color(color)
+
+        folium.PolyLine(locations=[start_coords, end_coords], color=color).add_to(m)
+
+        current_line = start_node[3]
+
+    folium.Marker(location=end_coords, icon=folium.Icon(color='red')).add_to(m)
+    m.save('dijkstra_map.html')
+    webbrowser.open('dijkstra_map.html')
+
+
+def negation_color(color):
+    if color == 'blue':
+        return 'orange'
+    else:
+        return 'blue'
 
 
