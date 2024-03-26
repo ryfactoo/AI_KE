@@ -239,8 +239,8 @@ def euclidean_distance(current_stop, goal_stop):
     return distance
 
 
-def euclidean_distance_cord(center_lat, current_lot, goal_stop):
-    distance = geopy_distance.distance((center_lat, current_lot), (goal_stop[4], goal_stop[5])).meters
+def euclidean_distance_cord(start_lat, start_lot, goal_lat, goal_lot):
+    distance = geopy_distance.distance((start_lat, start_lot), (goal_lat, goal_lot)).meters
     return distance
 
 
@@ -273,7 +273,8 @@ def circle_heuristic(current_stop, goal_stop):
     if (current_stop[3] == goal_stop[3]):
         return 0
 
-    min = 1 + meters_to_min(euclidean_distance_cord(center[0], center[1], goal_stop))
+    min = 1 + meters_to_min(euclidean_distance_cord(center[0], center[1], goal_stop[6], goal_stop[7])
+                            - euclidean_distance_cord(center[0], center[1], goal_stop[4],goal_stop[5]))
     return min
 
 

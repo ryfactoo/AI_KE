@@ -43,6 +43,8 @@ def time_to_minutes_after_midnight(time_str):
 
 
 if __name__ == '__main__':
+    print("hello")
+
     # list = create_list_from_csv('data_avg.csv')
     # list = create_list_from_csv('mini_avg.csv')
 
@@ -77,9 +79,9 @@ if __name__ == '__main__':
     # print("-------------------------")
     # astar.astar2(graph,"Wyszyńskiego".upper(), "pl. grunwaldzki".upper(), "07:15:00","s")
 
-    dijkstra.print_path(dijkstra.shortest_path(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00"))
-    print("-------------------------")
-    astar.astar_prepare(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00","T-")
+    # dijkstra.print_path(dijkstra.shortest_path(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00"))
+    # print("-------------------------")
+    # astar.astar_prepare(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00","T")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "LEŚNICA".upper(), "00:07:00"))
     # print("-------------------------")
