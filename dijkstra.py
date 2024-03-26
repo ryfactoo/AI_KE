@@ -1,6 +1,8 @@
 import heapq
 import webbrowser
 import folium
+import csvToObj
+import argparse
 
 
 def dijkstra(graph, start, start_time):
@@ -137,7 +139,7 @@ def print_path_on_map(path):
 
     folium.Marker(location=end_coords, icon=folium.Icon(color='red')).add_to(m)
     m.save('dijkstra_map.html')
-    # webbrowser.open('dijkstra_map.html')
+    webbrowser.open('dijkstra_map.html')
 
 
 def negation_color(color):
@@ -146,21 +148,21 @@ def negation_color(color):
     else:
         return 'blue'
 
-# def print_path_on_map(path):
-#     m = folium.Map(location=[52.0, 20.0], zoom_start=10)  # Ustawienie początkowego położenia mapy
-#     last_line = None
-#     folium.Marker(location=(path[0][5], path[0][6])).add_to(m)
-#
-#     for i in range(1, len(path) - 1):
-#         start_node = path[i]
-#         end_node = path[i + 1]
-#         start_coords = (float(start_node[5]), float(start_node[6]))
-#         end_coords = (float(end_node[5]), float(start_node[6]))
-#
-#         folium.Marker(location=start_coords).add_to(m)
-#
-#         folium.PolyLine([start_coords,end_coords]).add_to(m)
-#
-#         # Zapisanie mapy do pliku HTML
-#     m.save('dijkstra_map.html')
-#     webbrowser.open('dijkstra_map.html')
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-s", "--start_stop", help="Start stop", required=True)
+    parser.add_argument("-g", "--goal_stop", help="Goal stop", required=True)
+    parser.add_argument("-t", "--time", help="Time", required=True)
+
+    args = parser.parse_args()
+
+
+    list = csvToObj.create_list_from_csv('data_avg.csv')
+    graph = csvToObj.create_graph_from_list(list)
+
+
+    print_path(shortest_path(graph, args.start_stop.upper(), args.goal_stop.upper(), args.time))
+
+    # python dijkstra.py -s kwiska -g "pl. grunwaldzki" -t 09:00:00
+

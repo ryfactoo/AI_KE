@@ -43,13 +43,13 @@ def time_to_minutes_after_midnight(time_str):
 
 
 if __name__ == '__main__':
-    list = create_list_from_csv('data_avg.csv')
+    # list = create_list_from_csv('data_avg.csv')
     # list = create_list_from_csv('mini_avg.csv')
 
-    graph = create_graph_from_list(list)
+    # graph = create_graph_from_list(list)
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00"))
-    # astar.astar2(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00","t")
+    # astar.astar2(graph,"PAPROTNA".upper(), "Poczta Główna".upper(), "20:52:00","t-")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00"))
     # astar.astar2(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00", "s")
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     dijkstra.print_path(dijkstra.shortest_path(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00"))
     print("-------------------------")
-    astar.astar2(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00","s")
+    astar.astar_prepare(graph,"kwiska".upper(), "pl. grunwaldzki".upper(), "09:00:00","T-")
 
     # dijkstra.print_path(dijkstra.shortest_path(graph,"krzyki".upper(), "LEŚNICA".upper(), "00:07:00"))
     # print("-------------------------")
