@@ -1,8 +1,9 @@
 import heapq
-import webbrowser
+import os
 import folium
 import csvToObj
 import argparse
+import time
 
 
 def dijkstra(graph, start, start_time):
@@ -46,7 +47,10 @@ def dijkstra(graph, start, start_time):
                 heapq.heappush(pq, (new_dist, neighbor))
     return distances, prev_nodes
 
-
+def minute_after_midnight_to_str(time):
+    hour = (time // 60) % 24
+    minute = time % 60
+    return f"{hour:02d}:{minute:02d}:00"
 def shortest_path(graph, start, goal, start_time_str):
     hour, minute, second = map(int, start_time_str.split(':'))
     distances, prev_nodes = dijkstra(graph, start, hour * 60 + minute)
@@ -109,7 +113,7 @@ def print_path(time_start_end_path):
 
 
 def print_path_on_map(path):
-    m = folium.Map(location=[51.14, 17.02], zoom_start=12)
+    m = folium.Map(location=[51.14, 17.02], zoom_start=13)
     current_line = path[0][3]
     color = 'blue'
     for i in range(1, len(path)):
@@ -139,7 +143,7 @@ def print_path_on_map(path):
 
     folium.Marker(location=end_coords, icon=folium.Icon(color='red')).add_to(m)
     m.save('dijkstra_map.html')
-    webbrowser.open('dijkstra_map.html')
+    os.system('open "{}"'.format('dijkstra_map.html'))
 
 
 def negation_color(color):
@@ -161,8 +165,14 @@ if __name__ == '__main__':
     list = csvToObj.create_list_from_csv('data_avg.csv')
     graph = csvToObj.create_graph_from_list(list)
 
+    start_time = time.time()
+    s_time, e_time, path = shortest_path(graph, args.start_stop.upper(), args.goal_stop.upper(), args.time)
+    end_time = time.time()
 
-    print_path(shortest_path(graph, args.start_stop.upper(), args.goal_stop.upper(), args.time))
+    print(f"Work time: {end_time-start_time}")
+
+
+    print_path((s_time,e_time, path))
 
     # python dijkstra.py -s kwiska -g "pl. grunwaldzki" -t 09:00:00
 

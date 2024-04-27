@@ -1,8 +1,10 @@
 import argparse
 import heapq
+import os
+
 import csvToObj
-import webbrowser
 import folium
+import time
 from geopy import distance as geopy_distance
 
 penalty = 60
@@ -48,7 +50,6 @@ def astar(graph, start, goal, start_time, heuristic):
     return start_time, cost_so_far[goal], path
 
 
-# line, departure_time, arrival_time, end_stop, start_stop_lat,start_stop_lon, end_stop_lat, end_stop_lon, id
 
 def astar_multi_come_from(graph, start, goal, start_time):
     front = [(start_time, start)]
@@ -113,10 +114,7 @@ def astar_multi_come_from(graph, start, goal, start_time):
     current = came_from[goal, line]
     while current[0] != start:
         path.append(current)
-        if current[0] == start:
-            current = came_from[(current[0], None)]
-        else:
-            current = came_from[current[0], line]
+        current = came_from[current[0], line]
     path.append(current)
     path.reverse()
 
@@ -273,12 +271,14 @@ def circle_heuristic(current_stop, goal_stop):
     if (current_stop[3] == goal_stop[3]):
         return 0
 
-    min = 1 + meters_to_min(euclidean_distance_cord(center[0], center[1], goal_stop[6], goal_stop[7])
-                            - euclidean_distance_cord(center[0], center[1], goal_stop[4],goal_stop[5]))
+    min = 1 + meters_to_min(abs(euclidean_distance_cord(center[0], center[1], goal_stop[6], goal_stop[7])
+                            - euclidean_distance_cord(center[0], center[1], goal_stop[4],goal_stop[5])))
     return min
 
 
 def print_astar(start_time, end_time, path):
+    start_time = minute_after_midnight_to_str(start_time)
+    end_time = minute_after_midnight_to_str(end_time)
     print(start_time + " -----> " + end_time, end="\n")
 
     last_stop = path[0]
@@ -323,29 +323,29 @@ def astar_prepare(graph, start, goal, start_time, heuristic="t"):
     if heuristic.upper() == "S":
         start_time, end_time, path = astar_multi_come_from(graph, start.upper(), goal.upper(),
                                                            csvToObj.time_to_minutes_after_midnight(start_time))
-        print_astar(minute_after_midnight_to_str(start_time), minute_after_midnight_to_str(end_time), path)
+        return start_time, end_time, path
 
     elif heuristic.upper() == "T":
         start_time, end_time, path = astar(graph, start.upper(), goal.upper(),
                                            csvToObj.time_to_minutes_after_midnight(start_time),
                                            lowest_time_heuristic_manhattan)
-        print_astar(minute_after_midnight_to_str(start_time), minute_after_midnight_to_str(end_time), path)
+        return start_time, end_time, path
 
     elif heuristic.upper() == "T+":
         start_time, end_time, path = astar(graph, start.upper(), goal.upper(),
                                            csvToObj.time_to_minutes_after_midnight(start_time),
                                            lowest_time_heuristic_avg_manhattan_euclidean)
-        print_astar(minute_after_midnight_to_str(start_time), minute_after_midnight_to_str(end_time), path)
+        return start_time, end_time, path
 
     elif heuristic.upper() == "T-":
         start_time, end_time, path = astar(graph, start.upper(), goal.upper(),
                                            csvToObj.time_to_minutes_after_midnight(start_time),
                                            circle_heuristic)
-        print_astar(minute_after_midnight_to_str(start_time), minute_after_midnight_to_str(end_time), path)
+        return start_time, end_time, path
 
 
 def print_path_on_map(path):
-    m = folium.Map(location=[51.14, 17.02], zoom_start=12)
+    m = folium.Map(location=[51.14, 17.02], zoom_start=13)
     current_line = path[0][3]
     color = 'blue'
     for i in range(len(path) - 1):
@@ -362,9 +362,9 @@ def print_path_on_map(path):
         start_coords = (float(start_node[5]), float(start_node[6]))
 
         if i == 0:
-            folium.Marker(location=start_coords, icon=folium.Icon(color='green')).add_to(m)
+            folium.Marker(location=start_coords,tooltip=folium.Tooltip(text=start_node[0]), icon=folium.Icon(color='green')).add_to(m)
         else:
-            folium.Marker(location=start_coords, icon=folium.Icon(color)).add_to(m)
+            folium.Marker(location=start_coords,tooltip=folium.Tooltip(text=start_node[0]), icon=folium.Icon(color)).add_to(m)
 
         if current_line != start_node[3]:
             color = negation_color(color)
@@ -373,9 +373,10 @@ def print_path_on_map(path):
 
         current_line = start_node[3]
 
-    folium.Marker(location=end_coords, icon=folium.Icon(color='red')).add_to(m)
-    m.save('dijkstra_map.html')
-    webbrowser.open('dijkstra_map.html')
+    folium.Marker(location=end_coords,tooltip=folium.Tooltip(text=path[-1][0]), icon=folium.Icon(color='red')).add_to(m)
+    m.save('astar_map.html')
+
+    os.system('open "{}"'.format('astar_map.html'))
 
 
 def negation_color(color):
@@ -392,7 +393,7 @@ if __name__ == '__main__':
     parser.add_argument("-g", "--goal_stop", help="Goal stop", required=True)
     parser.add_argument("-t", "--time", help="Time", required=True)
     parser.add_argument("-m", "--mode",
-                        help="Mode heuristic (T - Euclidean, T+ - AVG euclidean + manhattan , T- Circle , S - Lowest "
+                        help="Mode heuristic (T - Euclidean, T+ - AVG euclidean + manhattan , T- - Circle , S - Lowest "
                              "switch line)",
                         required=True)
 
@@ -401,4 +402,11 @@ if __name__ == '__main__':
     list_csv = csvToObj.create_list_from_csv('data_avg.csv')
     graph = csvToObj.create_graph_from_list(list_csv)
 
-    astar_prepare(graph, args.start_stop.upper(), args.goal_stop.upper(), args.time, args.mode)
+    start_time = time.time()
+    s_time, e_time, path = astar_prepare(graph, args.start_stop.upper(), args.goal_stop.upper(), args.time, args.mode)
+    end_time = time.time()
+
+    print(f"Work time: {end_time-start_time}")
+
+    print_astar(s_time,e_time,path)
+

@@ -43,7 +43,9 @@ def time_to_minutes_after_midnight(time_str):
 
 
 if __name__ == '__main__':
-    print("hello")
+    # print("hello")
+
+    function_astar = lambda: astar.astar2(graph,"PAPROTNA".upper(), "Poczta główna".upper(), "20:52:00", "s")
 
     # list = create_list_from_csv('data_avg.csv')
     # list = create_list_from_csv('mini_avg.csv')
