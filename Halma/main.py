@@ -8,11 +8,12 @@ def print_hi():
     # Use a breakpoint in the code line below to debug your script.
     game = board.Board()
     game.init_game()
+    game.print_board()
     game.move_piece((0,4),(0,5))
     game.print_board()
     # print(game.check_jump((0,3),(0,2)))
     # game.print_board()
-    print(game.possible_movements((2,3)))
+    print(game.possible_movements((2,2)))
 
 
 # Press the green button in the gutter to run the script.

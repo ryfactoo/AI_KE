@@ -6,19 +6,29 @@ class Board:
         self.board = [[0 for _ in range(self.SIZE)] for _ in range(self.SIZE)]
 
     def print_board(self):
-        for row in self.board:
-            print(row)
-        print("__________________________")
+        symbols = {0: '.', 1: 'X', 2: 'O'}  # Definicja symboli dla różnych wartości
+
+        print("    ", end="")
+        for i in range(1, self.SIZE + 1):
+            print(f"{i:2}", end=" ")
+        print()
+
+        for i, row in enumerate(self.board):
+            print(f"{i + 1:2}", end="   ")
+
+            print('  '.join([symbols[cell] for cell in row]), end="  ")
+
+            print(f"{i + 1:2}")
 
     def init_game(self):
         for i in range(1, 6):
             for j in range(1, 6):
                 if i + j < 8:
-                    self.board[self.SIZE - i][self.SIZE - j] = 1
+                    self.board[self.SIZE - i][self.SIZE - j] = 2
         for i in range(0, 5):
             for j in range(0, 5):
                 if i + j < 6:
-                    self.board[i][j] = 2
+                    self.board[i][j] = 1
 
     def is_valid_move(self, start, end):
         start_x, start_y = start
@@ -49,20 +59,20 @@ class Board:
 
     def possible_movements_single(self, start):
         positions = set()
-        start_x, start_y, _ = start
+        start_x, start_y, mode = start
 
         for x in range(-1, 2):
             if x + start_x < 0 or x + start_x >= self.SIZE:
                 continue
 
             for y in range(-1, 2):
-                value = self.is_valid_move((start_x,start_y), (start_x + x, start_y + y))
+                value = self.is_valid_move((start_x, start_y), (start_x + x, start_y + y))
                 if value is None:
-                    end = self.check_jump((start_x,start_y), (start_x + x, start_y + y))
+                    end = self.check_jump((start_x, start_y), (start_x + x, start_y + y))
                     if end:
                         positions.add((end[0], end[1], "J"))
 
-                elif value:
+                elif value and mode == "S":
                     positions.add((start_x + x, start_y + y, "M"))
 
         return positions
@@ -78,12 +88,12 @@ class Board:
             if position[2] == "M":
                 movements.add(position)
                 continue
-
             new_positions = self.possible_movements_single(position)
             new_movements.update(new_positions.difference(movements))
-            movements.update(new_positions)
-        movements.discard((start[0], start[1], "S"))
-        return movements
+            movements.add(position)
+        movements.discard(start)
+
+        return {(t[0], t[1]) for t in movements}
 
     def move_piece(self, start, end):
         if self.is_valid_move(start, end):
@@ -94,3 +104,18 @@ class Board:
             return True
         else:
             return False
+
+    def is_end(self, player):
+
+        if player == 1:
+            for i in range(1, 6):
+                for j in range(1, 6):
+                    if i + j < 8 and self.board[self.SIZE - i][self.SIZE - j] != 1:
+                        return False
+            return True
+        else:
+            for i in range(0, 5):
+                for j in range(0, 5):
+                    if i + j < 6 and self.board[i][j] != 2:
+                        return False
+            return True
