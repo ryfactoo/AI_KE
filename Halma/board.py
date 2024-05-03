@@ -91,9 +91,30 @@ class Board:
             new_positions = self.possible_movements_single(position)
             new_movements.update(new_positions.difference(movements))
             movements.add(position)
+
+        movements = {(t[0], t[1]) for t in movements}
         movements.discard(start)
 
-        return {(t[0], t[1]) for t in movements}
+        return movements
+
+    def getPlayerPositions(self,player):
+        positions = set()
+
+        for x in range(0,self.SIZE):
+            for y in range(0,self.SIZE):
+
+                if self.board[x][y] == player:
+                    positions.add((x,y))
+        return positions
+    def possible_movements_for_player(self, player):
+        movements = {}
+        positions = self.getPlayerPositions(player)
+
+        for position in positions:
+            movements[position] = self.possible_movements(position)
+
+        return movements
+
 
     def move_piece(self, start, end):
         if self.is_valid_move(start, end):
@@ -107,7 +128,7 @@ class Board:
 
     def is_end(self, player):
 
-        if player == 1:
+        if player == 2:
             for i in range(1, 6):
                 for j in range(1, 6):
                     if i + j < 8 and self.board[self.SIZE - i][self.SIZE - j] != 1:

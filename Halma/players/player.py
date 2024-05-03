@@ -3,7 +3,7 @@ import pyinputplus as pyip
 
 
 class Player(PlayerMode):
-    def move(self):
+    def move(self, board):
         return self.player_input()
 
     def player_input(self):
