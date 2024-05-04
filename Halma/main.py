@@ -28,7 +28,7 @@ def print_hi():
 
     game = gm.Game()
 
-    game.start_game("CBCM", "CMM", "M", "M")
+    game.start_game("CBCM", "CMM", "HCC", "M")
 
 
 

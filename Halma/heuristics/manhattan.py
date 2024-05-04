@@ -1,5 +1,5 @@
 from heuristics.heuristic import Heuristic
-# import numpy as np
+import numpy as np
 # import matplotlib.pyplot as plt
 
 class Manhattan(Heuristic):
@@ -29,21 +29,20 @@ class Manhattan(Heuristic):
         if position in self.end_zone[player]:
             return distance - 10
         elif position == self.end_zone[(player % 2) + 1][0]:
-            return distance + 100
+            return distance + 30
         elif distance == 39:
-            return distance + 50
+            return distance + 20
         elif position in self.end_zone[(player % 2) + 1]:
             return distance + 5
         return distance
 
     # def print_heat_map(self,end_point,player):
-    #     heatmap = np.zeros((16, 16))  # Inicjalizacja mapy ciepła
+    #     heatmap = np.zeros((16, 16))
     #
     #     for x in range(16):
     #         for y in range(16):
     #             heatmap[x, y] = self.single_move(end_point, (x, y), player)
     #
-    #             # Wyświetlenie mapy ciepła
     #     plt.imshow(heatmap, cmap='hot', interpolation='nearest')
     #     plt.colorbar()
     #     plt.title('Heat Map')

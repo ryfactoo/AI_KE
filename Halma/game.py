@@ -6,6 +6,7 @@ import players.computer_minmax_alpha_beta as CMMAB
 import players.computer_minmax as CMM
 import heuristics.manhattan as manhattan
 import heuristics.random as randomHeuristic
+import heuristics.heatmap_corners_to_corner as cornersHeuristic
 
 
 class Game:
@@ -29,6 +30,8 @@ class Game:
             return manhattan.Manhattan()
         elif (heuristic == "R"):
             return randomHeuristic.Random()
+        elif (heuristic == "HCC"):
+            return cornersHeuristic.HeatmapCornersToCorner()
 
     def init(self, board):
         if board:
@@ -91,7 +94,7 @@ if __name__ == '__main__':
                         required=True)
 
     parser.add_argument("-h1", "--heuristicP1",
-                        choices=['M', 'R'],
+                        choices=['M', 'R', 'HCC'],
                         help="Heuristic for p1: M - Manhattan heuristic, R - Random heuristic",
                         default='M')
 
@@ -101,7 +104,7 @@ if __name__ == '__main__':
                         required=True)
 
     parser.add_argument("-h2", "--heuristicP2",
-                        choices=['M', 'R'],
+                        choices=['M', 'R', 'HCC'],
                         help="Heuristic for p2: M - Manhattan heuristic, R - Random heuristic",
                         default='M')
 
