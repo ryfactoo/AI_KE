@@ -14,15 +14,26 @@ class Manhattan(Heuristic):
         for position in positions:
             sum_heuristic = sum_heuristic + self.single_move(end_point, position, player)
 
+        player = (player % 2) + 1
+        positions = board.getPlayerPositions(player)
+        end_point = (0,0) if player == 2 else (15, 15)
+
+        for position in positions:
+            sum_heuristic = sum_heuristic - self.single_move(end_point, position, player)
+
         return sum_heuristic
 
     def single_move(self, end_point, position, player):
-        distance = abs(position[0] - end_point[0]) + abs(position[1] - end_point[1]) + 5
+        distance = abs(position[0] - end_point[0]) + abs(position[1] - end_point[1]) + 10
 
         if position in self.end_zone[player]:
-            return distance - 5
+            return distance - 10
+        elif position == self.end_zone[(player % 2) + 1][0]:
+            return distance + 100
+        elif distance == 39:
+            return distance + 50
         elif position in self.end_zone[(player % 2) + 1]:
-            return distance + 3
+            return distance + 5
         return distance
 
     # def print_heat_map(self,end_point,player):

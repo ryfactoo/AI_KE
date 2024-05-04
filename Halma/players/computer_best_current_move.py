@@ -24,3 +24,34 @@ class ComputerBestCurrentMove(PlayerMode):
         best_heuristic, move = heapq.heappop(pq)
         print(best_heuristic)
         return move
+
+    def min_max_elem(self, list, max_first):
+        max = -1
+
+        for elem in list:
+            if max == -1:
+                max = elem
+                continue
+
+            if max_first and elem[0] > max[0]:
+                max = elem
+                continue
+            elif not max_first and elem[0] < max[0]:
+                max = elem
+                continue
+
+            tmp_elem = elem[1:]
+            tmp_max = max[1:]
+            tmp_max_first = not max_first
+
+            while (len(tmp_elem) > 1):
+                if tmp_max_first and tmp_elem[0] > tmp_max[0]:
+                    max = elem
+                    break
+                elif not tmp_max_first and tmp_elem[0] < tmp_max[0]:
+                    max = elem
+                    break
+                tmp_max = tmp_max[1:]
+                tmp_elem = tmp_elem[1:]
+                tmp_max_first = not tmp_max_first
+        return max

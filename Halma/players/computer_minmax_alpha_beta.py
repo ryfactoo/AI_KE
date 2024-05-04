@@ -1,7 +1,11 @@
 from players.computer_best_current_move import ComputerBestCurrentMove
 
+MAX = 10000
+MIN = -10000
 
-class ComputerMinmax(ComputerBestCurrentMove):
+
+class ComputerMinmaxAlphaBeta(ComputerBestCurrentMove):
+
     def __init__(self, heuristic, player, targetDepth):
         super().__init__(heuristic, player)
         self.targetDepth = targetDepth
@@ -11,18 +15,15 @@ class ComputerMinmax(ComputerBestCurrentMove):
         if self.targetDepth == 1:
             return super().move(board)
         else:
-            x =  self.minimax(1, True, board)
-            print(x)
-            return x[-1]
+            return self.minimax(1, True, board, MAX, MIN)[1]
 
     def minimax(self, curDepth,
-                maxTurn, board):
+                maxTurn, board, alpha, beta):
 
         player = self.player if maxTurn else (self.player % 2) + 1
+        best = (MAX,) if maxTurn else (MIN,)
 
         possible_moves = board.possible_movements_for_player(player)
-
-        pq = []
 
         for possible_move in possible_moves:
             if not any(possible_moves[possible_move]):
@@ -32,12 +33,20 @@ class ComputerMinmax(ComputerBestCurrentMove):
                 board.move_piece(possible_move, move)
 
                 if curDepth != self.targetDepth:
-                    pq.append((self.minimax(curDepth + 1, not maxTurn, board)[0], (possible_move, move)))
+                    val = (self.minimax(curDepth + 1, not maxTurn, board, alpha, beta)[0], (possible_move, move))
                 else:
-                    pq.append((self.heuristic.calculate(board, self.player), (possible_move, move)))
+                    val = (self.heuristic.calculate(board, self.player), (possible_move, move))
 
                 board.move_piece(move, possible_move)
 
-        best_move = min(pq, key=lambda x: x[0]) if maxTurn else max(pq, key=lambda x: x[0])
-        return best_move
+                if maxTurn:
+                    best = min(best, val, key=lambda x: x[0])
+                    alpha = min(alpha, best[0])
+                else:
+                    best = max(best, val, key=lambda x: x[0])
+                    beta = max(beta, best[0])
 
+                if beta >= alpha:
+                    break
+
+        return best

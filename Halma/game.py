@@ -2,29 +2,32 @@ import argparse
 import board as game_board
 import players.player as human_player
 import players.computer_best_current_move as CBMC
+import players.computer_minmax_alpha_beta as CMMAB
 import players.computer_minmax as CMM
 import heuristics.manhattan as manhattan
 import heuristics.random as randomHeuristic
 
-import time
 
 class Game:
-    def player_mode(self, player, heuristic_type ,player_char, minmax_depth):
+    def player_mode(self, player, heuristic_type, player_char, minmax_depth):
 
-        if(player == "P"):
+        if player == "P":
             return human_player.Player()
-        elif(player == "CBCM"):
+        elif player == "CBCM":
             heuristic = self.heuristic_mode(heuristic_type)
             return CBMC.ComputerBestCurrentMove(heuristic, player_char)
-        elif(player == "CMM"):
+        elif player == "CMM":
             heuristic = self.heuristic_mode(heuristic_type)
             return CMM.ComputerMinmax(heuristic, player_char, minmax_depth)
+        elif player == "CMMAB":
+            heuristic = self.heuristic_mode(heuristic_type)
+            return CMMAB.ComputerMinmaxAlphaBeta(heuristic, player_char, minmax_depth)
 
     def heuristic_mode(self, heuristic):
 
-        if(heuristic == "M"):
+        if (heuristic == "M"):
             return manhattan.Manhattan()
-        elif(heuristic == "R"):
+        elif (heuristic == "R"):
             return randomHeuristic.Random()
 
     def init(self, board):
@@ -33,7 +36,7 @@ class Game:
         else:
             self.board.init_game()
 
-    def start_game(self, p1, p2, heuristic_p1, heuristic_p2, minmax_depth = 2, board = None):
+    def start_game(self, p1, p2, heuristic_p1, heuristic_p2, minmax_depth=2, board=None):
         self.board = game_board.Board()
 
         self.init(board)
@@ -44,33 +47,34 @@ class Game:
         self.game()
 
     def game(self):
-        while(True):
-            while(True):
+        while (True):
+            while (True):
                 self.board.print_board()
                 print("Player 1 (X)")
                 move = self.p1.move(self.board)
                 moves = self.board.possible_movements(move[0])
                 if move[1] in moves:
-                    self.board.move_piece(move[0],move[1])
+                    self.board.move_piece(move[0], move[1])
                     break
                 print("Invalid move")
-            if self.board.is_end(1):
+            if self.board.is_end(2):
                 self.board.print_board()
                 print("WIN Player 1")
                 break
 
             # time.sleep(1)
 
-            while(True):
+            while (True):
                 self.board.print_board()
                 print("Player 2 (O)")
                 move = self.p2.move(self.board)
+                print(move)
                 moves = self.board.possible_movements(move[0])
                 if move[1] in moves:
-                    self.board.move_piece(move[0],move[1])
+                    self.board.move_piece(move[0], move[1])
                     break
                 print("Invalid move")
-            if self.board.is_end(2):
+            if self.board.is_end(1):
                 self.board.print_board()
                 print("WIN Player 2")
                 break
@@ -78,35 +82,36 @@ class Game:
             # time.sleep(1)
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-p1", "--player1",
-                        choices=['P', 'CBCM'],
-                        help="Player 1 mode : P - Player, CBCM - Computer best current move",
+                        choices=['P', 'CBCM', 'CMM', 'CMMAB'],
+                        help="Player 1 mode : P - Player , CBCM - Computer best current move , CMM - Computer minmax , CMMAB - Computer minmax alpha beta",
                         required=True)
 
     parser.add_argument("-h1", "--heuristicP1",
-                         choices=['M', 'R'],
-                         help="Heuristic for p1: M - Manhattan heuristic, R - Random heuristic",
-                         default='M')
+                        choices=['M', 'R'],
+                        help="Heuristic for p1: M - Manhattan heuristic, R - Random heuristic",
+                        default='M')
 
     parser.add_argument("-p2", "--player2",
-                        choices=['P', 'CBCM', 'CMM'],
-                        help="Player 2 mode : P - Player , CBCM - Computer best current move , CMM - Computer minmax",
+                        choices=['P', 'CBCM', 'CMM', 'CMMAB'],
+                        help="Player 2 mode : P - Player , CBCM - Computer best current move , CMM - Computer minmax , CMMAB - Computer minmax alpha beta",
                         required=True)
 
     parser.add_argument("-h2", "--heuristicP2",
-                         choices=['M', 'R'],
-                         help="Heuristic for p2: M - Manhattan heuristic, R - Random heuristic",
-                         default='M')
+                        choices=['M', 'R'],
+                        help="Heuristic for p2: M - Manhattan heuristic, R - Random heuristic",
+                        default='M')
+
+    parser.add_argument("-md", "--minmaxdepth",
+                        type=int,
+                        help="Minmax depth",
+                        default=2)
 
     args = parser.parse_args()
 
     game = Game()
 
-
-    game.start_game(args.player1, args.player2, args.heuristicP1, args.heuristicP2)
-
-
+    game.start_game(args.player1, args.player2, args.heuristicP1, args.heuristicP2, args.minmaxdepth)
