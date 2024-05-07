@@ -106,6 +106,8 @@ class Board:
                 if self.board[x][y] == player:
                     positions.add((x,y))
         return positions
+
+
     def possible_movements_for_player(self, player):
         movements = {}
         positions = self.getPlayerPositions(player)
@@ -140,3 +142,9 @@ class Board:
                     if i + j < 6 and self.board[i][j] != 2:
                         return False
             return True
+
+    def print_possible_move(self,player):
+        moves = self.possible_movements_for_player(player)
+
+        for move in moves:
+            print(f'{move}: {moves[move]}')

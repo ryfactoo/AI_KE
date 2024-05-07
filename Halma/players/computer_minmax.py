@@ -11,7 +11,7 @@ class ComputerMinmax(ComputerBestCurrentMove):
         if self.targetDepth == 1:
             return super().move(board)
         else:
-            x =  self.minimax(1, True, board)
+            x = self.minimax(1, True, board)
             print(x)
             return x[-1]
 

@@ -1,5 +1,5 @@
 from heuristics.heuristic import Heuristic
-import numpy as np
+# import numpy as np
 # import matplotlib.pyplot as plt
 
 class Manhattan(Heuristic):
@@ -30,6 +30,10 @@ class Manhattan(Heuristic):
             return distance - 10
         elif position == self.end_zone[(player % 2) + 1][0]:
             return distance + 30
+        elif position == self.end_zone[(player % 2) + 1][5]:
+            return distance + 20
+        elif position == self.end_zone[(player % 2) + 1][1]:
+            return distance + 20
         elif distance == 39:
             return distance + 20
         elif position in self.end_zone[(player % 2) + 1]:

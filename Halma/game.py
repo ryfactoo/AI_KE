@@ -1,4 +1,5 @@
 import argparse
+import time
 import board as game_board
 import players.player as human_player
 import players.computer_best_current_move as CBMC
@@ -7,6 +8,10 @@ import players.computer_minmax as CMM
 import heuristics.manhattan as manhattan
 import heuristics.random as randomHeuristic
 import heuristics.heatmap_corners_to_corner as cornersHeuristic
+import heuristics.heatmap_corners_to_corner_three_main_way as cornersHeuristicThreeMainWay
+import heuristics.manhattan_heatmap_corners_to_corner as manhattanHeatmapCornersToCoerner
+import heuristics.avg_manhattan_heatmap_corners_to_corner as avg_manhattan_heatmap_corners_to_corner
+import heuristics.avg_manhattan_heatmap_corners_to_corner_three_main_way as avg_manhattan_heatmap_corners_to_corner_three_main_way
 
 
 class Game:
@@ -32,6 +37,14 @@ class Game:
             return randomHeuristic.Random()
         elif (heuristic == "HCC"):
             return cornersHeuristic.HeatmapCornersToCorner()
+        elif (heuristic == "HCC3MW"):
+            return cornersHeuristicThreeMainWay.HeatmapCornersToCornerThreeMainWay()
+        elif (heuristic == "M+HCC"):
+            return manhattanHeatmapCornersToCoerner.ManhattanHeatmapCornersToCorner()
+        elif (heuristic == "AVGMHCC"):
+            return avg_manhattan_heatmap_corners_to_corner.AVGManhattanHeatmapCornersToCorner()
+        elif (heuristic == "AVGMHCC3MW"):
+            return avg_manhattan_heatmap_corners_to_corner_three_main_way.AVGManhattanHeatmapCornersToCornerThreeMainWay()
 
     def init(self, board):
         if board:
@@ -50,18 +63,30 @@ class Game:
         self.game()
 
     def game(self):
+        round = 1
+        start_time = 0
+        end_time = 0
+
         while (True):
             while (True):
                 self.board.print_board()
                 print("Player 1 (X)")
+                print("Round: " + str(round))
+                start_time = time.time()
                 move = self.p1.move(self.board)
+                end_time = time.time()
                 moves = self.board.possible_movements(move[0])
                 if move[1] in moves:
+                    self.board.print_possible_move(1)
+                    print(move)
+                    print(end_time - start_time)
                     self.board.move_piece(move[0], move[1])
+                    round = round + 1
                     break
                 print("Invalid move")
             if self.board.is_end(2):
                 self.board.print_board()
+                print("Round: " + str(round))
                 print("WIN Player 1")
                 break
 
@@ -70,15 +95,22 @@ class Game:
             while (True):
                 self.board.print_board()
                 print("Player 2 (O)")
+                print("Round: " + str(round))
+                start_time = time.time()
                 move = self.p2.move(self.board)
-                print(move)
+                end_time = time.time()
                 moves = self.board.possible_movements(move[0])
                 if move[1] in moves:
+                    self.board.print_possible_move(1)
+                    print(move)
+                    print(end_time - start_time)
                     self.board.move_piece(move[0], move[1])
+                    round = round + 1
                     break
                 print("Invalid move")
             if self.board.is_end(1):
                 self.board.print_board()
+                print("Round: " + str(round))
                 print("WIN Player 2")
                 break
 
@@ -94,18 +126,32 @@ if __name__ == '__main__':
                         required=True)
 
     parser.add_argument("-h1", "--heuristicP1",
-                        choices=['M', 'R', 'HCC'],
+                        choices=['M', 'R', 'HCC','HCC3MW','M+HCC','AVGMHCC','AVGMHCC3MW'],
                         help="Heuristic for p1: M - Manhattan heuristic, R - Random heuristic",
                         default='M')
 
     parser.add_argument("-p2", "--player2",
                         choices=['P', 'CBCM', 'CMM', 'CMMAB'],
-                        help="Player 2 mode : P - Player , CBCM - Computer best current move , CMM - Computer minmax , CMMAB - Computer minmax alpha beta",
+                        help="Player 2 mode :"
+                             " M - Manhattan heuristic,"
+                             " R - Random heuristic"
+                             " HCC - Heatmap heuristic corners to corner"
+                             " HCC3MW - Heatmap corners to corner three main way heuristic"
+                             " M+HCC - Manhattan start game, when first pawn is in end zone then heatmap corners to corner"
+                             " AVGMHCC - AVG manhattan and heatmap corners to corner"
+                             " AVGMHCC3MW - AVG manhattan and heatmap corners to corner three main way",
                         required=True)
 
     parser.add_argument("-h2", "--heuristicP2",
-                        choices=['M', 'R', 'HCC'],
-                        help="Heuristic for p2: M - Manhattan heuristic, R - Random heuristic",
+                        choices=['M', 'R', 'HCC','HCC3MW','M+HCC','AVGMHCC','AVGMHCC3MW'],
+                        help="Heuristic for p2:"
+                             " M - Manhattan heuristic,"
+                             " R - Random heuristic"
+                             " HCC - Heatmap heuristic corners to corner"
+                             " HCC3MW - Heatmap corners to corner three main way heuristic"
+                             " M+HCC - Manhattan start game, when first pawn is in end zone then heatmap corners to corner"
+                             " AVGMHCC - AVG manhattan and heatmap corners to corner"
+                             " AVGMHCC3MW - AVG manhattan and heatmap corners to corner three main way",
                         default='M')
 
     parser.add_argument("-md", "--minmaxdepth",

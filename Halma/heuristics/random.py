@@ -14,4 +14,4 @@ class Random(Heuristic):
         if tuple(self.end_zone[(player %2) +1]) in positions:
             return pyRandom.randint(10,500)^2
 
-        return pyRandom.randint(0,500)
+        return pyRandom.randint(-500,500)

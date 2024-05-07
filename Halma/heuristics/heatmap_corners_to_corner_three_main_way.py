@@ -2,7 +2,7 @@ from heuristics.heuristic import Heuristic
 # import numpy as np
 # import matplotlib.pyplot as plt
 
-class HeatmapCornersToCorner(Heuristic):
+class HeatmapCornersToCornerThreeMainWay(Heuristic):
 
     def __init__(self):
         super().__init__()
@@ -13,29 +13,39 @@ class HeatmapCornersToCorner(Heuristic):
         for i in range(0, 5):
             for j in range(0, 5):
                 if i + j < 6:
-                    self.heatmap[2][i][j] -= 10
+                    self.heatmap[2][i][j] -= 20
                     self.heatmap[1][i][j] += 5
-        self.heatmap[1][0][0] += 15
-        self.heatmap[1][1][0] += 15
-        self.heatmap[1][0][1] += 15
-        self.heatmap[1][15][11] -= 4
-        self.heatmap[1][14][11] -= 4
-        self.heatmap[1][11][15] -= 4
-        self.heatmap[1][11][14] -= 4
-        self.heatmap[1][13][13] -= 2
+        self.heatmap[1][0][0] += 5
+        self.heatmap[1][1][0] += 5
+        self.heatmap[1][0][1] += 5
+        self.heatmap[1][15][11] -= 3
+        self.heatmap[1][14][11] -= 3
+        self.heatmap[1][11][15] -= 3
+        self.heatmap[1][11][14] -= 3
         for i in range(1, 6):
             for j in range(1, 6):
                 if i + j < 8:
-                    self.heatmap[1][16-i][16-j] -= 10
+                    self.heatmap[1][16-i][16-j] -= 20
                     self.heatmap[2][16-i][16-j] += 5
-        self.heatmap[2][15][15] += 15
-        self.heatmap[2][14][15] += 15
-        self.heatmap[2][15][14] += 15
-        self.heatmap[2][0][4] -= 4
-        self.heatmap[2][1][4] -= 4
-        self.heatmap[2][4][0] -= 4
-        self.heatmap[2][4][1] -= 4
-        self.heatmap[2][2][2] -= 2
+        self.heatmap[2][15][15] += 5
+        self.heatmap[2][14][15] += 5
+        self.heatmap[2][15][14] += 5
+        self.heatmap[2][1][4] -= 8
+        self.heatmap[2][0][4] -= 8
+        self.heatmap[2][4][1] -= 8
+        self.heatmap[2][4][0] -= 8
+
+        for i in range(1,16):
+            self.heatmap[1][i][i-1] = self.heatmap[1][i][i]
+            self.heatmap[1][i-1][i] = self.heatmap[1][i][i]
+            self.heatmap[1][i][i] = self.heatmap[1][i][i] - 1
+
+            self.heatmap[2][i][i-1] = self.heatmap[2][i-1][i-1]
+            self.heatmap[2][i-1][i] = self.heatmap[2][i-1][i-1]
+            self.heatmap[2][i-1][i-1] = self.heatmap[2][i-1][i-1] - 1
+
+
+        print(self.heatmap)
 
     def calculate(self, board, player):
         # self.print_heat_map(player)

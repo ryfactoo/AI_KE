@@ -22,7 +22,6 @@ class ComputerBestCurrentMove(PlayerMode):
                 board.move_piece(move,possible_move)
 
         best_heuristic, move = heapq.heappop(pq)
-        print(best_heuristic)
         return move
 
     def min_max_elem(self, list, max_first):

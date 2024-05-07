@@ -32,7 +32,7 @@ class ComputerMinmaxAlphaBeta(ComputerBestCurrentMove):
             for move in possible_moves[possible_move]:
                 board.move_piece(possible_move, move)
 
-                if curDepth != self.targetDepth:
+                if curDepth != self.targetDepth and not board.is_end(player):
                     val = (self.minimax(curDepth + 1, not maxTurn, board, alpha, beta)[0], (possible_move, move))
                 else:
                     val = (self.heuristic.calculate(board, self.player), (possible_move, move))
