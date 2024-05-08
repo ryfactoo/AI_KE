@@ -60,7 +60,7 @@ class Game:
         self.p1 = self.player_mode(p1, heuristic_p1, 1, minmax_depth)
         self.p2 = self.player_mode(p2, heuristic_p2, 2, minmax_depth)
 
-        self.game()
+        return self.game()
 
     def game(self):
         round = 1
@@ -79,7 +79,7 @@ class Game:
                 if move[1] in moves:
                     self.board.print_possible_move(1)
                     print(move)
-                    print(end_time - start_time)
+                    print(f'time: {end_time - start_time}')
                     self.board.move_piece(move[0], move[1])
                     round = round + 1
                     break
@@ -87,8 +87,8 @@ class Game:
             if self.board.is_end(2):
                 self.board.print_board()
                 print("Round: " + str(round))
-                print("WIN Player 1")
-                break
+                print("Winner char: 1")
+                return self.p1.heuristic, self.p1
 
             # time.sleep(1)
 
@@ -103,7 +103,7 @@ class Game:
                 if move[1] in moves:
                     self.board.print_possible_move(1)
                     print(move)
-                    print(end_time - start_time)
+                    print(f'time: {end_time - start_time}')
                     self.board.move_piece(move[0], move[1])
                     round = round + 1
                     break
@@ -111,8 +111,8 @@ class Game:
             if self.board.is_end(1):
                 self.board.print_board()
                 print("Round: " + str(round))
-                print("WIN Player 2")
-                break
+                print("Winner char: 2")
+                return self.p2.heuristic, self.p2
 
             # time.sleep(1)
 
@@ -163,4 +163,6 @@ if __name__ == '__main__':
 
     game = Game()
 
-    game.start_game(args.player1, args.player2, args.heuristicP1, args.heuristicP2, args.minmaxdepth)
+    result = game.start_game(args.player1, args.player2, args.heuristicP1, args.heuristicP2, args.minmaxdepth)
+    print(f'Winner heuristic: {result[0].__class__.__name__}')
+    print(f'Winner player: {result[1].__class__.__name__}')
