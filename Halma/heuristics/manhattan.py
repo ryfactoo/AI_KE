@@ -1,6 +1,6 @@
 from heuristics.heuristic import Heuristic
-# import numpy as np
-# import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
 
 class Manhattan(Heuristic):
 
@@ -40,16 +40,16 @@ class Manhattan(Heuristic):
             return distance + 5
         return distance
 
-    # def print_heat_map(self,end_point,player):
-    #     heatmap = np.zeros((16, 16))
-    #
-    #     for x in range(16):
-    #         for y in range(16):
-    #             heatmap[x, y] = self.single_move(end_point, (x, y), player)
-    #
-    #     plt.imshow(heatmap, cmap='hot', interpolation='nearest')
-    #     plt.colorbar()
-    #     plt.title('Heat Map')
-    #     plt.xlabel('X')
-    #     plt.ylabel('Y')
-    #     plt.show()
+    def print_heat_map(self,end_point,player):
+        heatmap = np.zeros((16, 16))
+
+        for x in range(16):
+            for y in range(16):
+                heatmap[x, y] = self.single_move(end_point, (x, y), player)
+
+        plt.imshow(heatmap, cmap='hot', interpolation='nearest')
+        plt.colorbar()
+        plt.title('Heat Map')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()

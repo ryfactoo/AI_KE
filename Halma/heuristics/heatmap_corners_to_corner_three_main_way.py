@@ -1,6 +1,6 @@
 from heuristics.heuristic import Heuristic
-# import numpy as np
-# import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
 
 class HeatmapCornersToCornerThreeMainWay(Heuristic):
 
@@ -67,16 +67,16 @@ class HeatmapCornersToCornerThreeMainWay(Heuristic):
     def single_move(self, position, player):
         return self.heatmap[player][position[0]][position[1]]
 
-    # def print_heat_map(self,player):
-    #     heatmap = np.zeros((16, 16))
-    #
-    #     for x in range(16):
-    #         for y in range(16):
-    #             heatmap[x, y] = self.single_move((x, y), player)
-    #
-    #     plt.imshow(heatmap, cmap='hot', interpolation='nearest')
-    #     plt.colorbar()
-    #     plt.title('Heat Map')
-    #     plt.xlabel('X')
-    #     plt.ylabel('Y')
-    #     plt.show()
+    def print_heat_map(self,player):
+        heatmap = np.zeros((16, 16))
+
+        for x in range(16):
+            for y in range(16):
+                heatmap[x, y] = self.single_move((x, y), player)
+
+        plt.imshow(heatmap, cmap='hot', interpolation='nearest')
+        plt.colorbar()
+        plt.title('Heat Map')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()

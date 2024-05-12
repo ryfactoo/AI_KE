@@ -63,15 +63,17 @@ class Game:
         return self.game()
 
     def game(self):
-        round = 1
+        round_number = 1
         start_time = 0
         end_time = 0
+        sum_player_1_time = 0
+        sum_player_2_time = 0
 
         while (True):
             while (True):
                 self.board.print_board()
                 print("Player 1 (X)")
-                print("Round: " + str(round))
+                print("Round: " + str(round_number))
                 start_time = time.time()
                 move = self.p1.move(self.board)
                 end_time = time.time()
@@ -79,23 +81,24 @@ class Game:
                 if move[1] in moves:
                     self.board.print_possible_move(1)
                     print(move)
+                    sum_player_1_time = sum_player_1_time + (end_time - start_time)
                     print(f'time: {end_time - start_time}')
                     self.board.move_piece(move[0], move[1])
-                    round = round + 1
+                    round_number = round_number + 1
                     break
                 print("Invalid move")
             if self.board.is_end(2):
                 self.board.print_board()
-                print("Round: " + str(round))
+                print("Round: " + str(round_number))
                 print("Winner char: 1")
-                return self.p1.heuristic, self.p1
+                return self.p1.heuristic, self.p1, sum_player_1_time/round(round_number/2), sum_player_2_time/int(round_number/2)
 
             # time.sleep(1)
 
             while (True):
                 self.board.print_board()
                 print("Player 2 (O)")
-                print("Round: " + str(round))
+                print("Round: " + str(round_number))
                 start_time = time.time()
                 move = self.p2.move(self.board)
                 end_time = time.time()
@@ -103,16 +106,20 @@ class Game:
                 if move[1] in moves:
                     self.board.print_possible_move(1)
                     print(move)
+                    sum_player_2_time = sum_player_2_time + (end_time - start_time)
                     print(f'time: {end_time - start_time}')
                     self.board.move_piece(move[0], move[1])
-                    round = round + 1
+                    round_number = round_number + 1
                     break
                 print("Invalid move")
             if self.board.is_end(1):
                 self.board.print_board()
-                print("Round: " + str(round))
+                print("Round: " + str(round_number))
                 print("Winner char: 2")
-                return self.p2.heuristic, self.p2
+                return self.p2.heuristic, self.p2, sum_player_1_time/round(round_number/2), sum_player_2_time/int(round_number/2)
+
+            if round_number >= 300:
+                return self.p2.heuristic, self.p2, sum_player_1_time/round(round_number/2), sum_player_2_time/int(round_number/2)
 
             # time.sleep(1)
 
@@ -166,3 +173,5 @@ if __name__ == '__main__':
     result = game.start_game(args.player1, args.player2, args.heuristicP1, args.heuristicP2, args.minmaxdepth)
     print(f'Winner heuristic: {result[0].__class__.__name__}')
     print(f'Winner player: {result[1].__class__.__name__}')
+    print(f'Player 1 avg time {result[2]}')
+    print(f'Player 2 avg time {result[3]}')
